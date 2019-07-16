@@ -1,58 +1,48 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import html2canvas from "html2canvas";
-import * as rasterizeHTML from "rasterizehtml";
+import styled from "@emotion/styled";
+import domtoimage from "dom-to-image";
 
 import "./styles.css";
 
-function nodeToString(node) {
-  var tmpNode = document.createElement("div");
-  tmpNode.appendChild(node.cloneNode(true));
-  var str = tmpNode.innerHTML;
-  tmpNode = node = null; // prevent memory leaks in IE
-  return str;
-}
-
 function App() {
   const appRef = React.useRef();
-  const [state, setState] = React.useState(0);
-  const [imageData, setImageData] = React.useState(null);
+  const canvasRef = React.useRef();
+  const [imageSrc, setImageSrc] = React.useState(null);
 
-  async function generateScreenshot() {
-    const rasterized = await rasterizeHTML.drawHTML(
-      nodeToString(appRef.current),
-    );
-    const tempCanvas = Object.assign(document.createElement("canvas"), {
-      width: window.innerWidth,
-      height: window.innerHeight,
-      // width: 320, // window.innerWidth
-      // height: 320, // window.innerHeight
-      // tempCanvas.id: "tempCanvas",
-    });
-    tempCanvas.getContext("2d").drawImage(rasterized.image, 0, 0);
-    var imgDataUrl = tempCanvas.toDataURL("image/png");
-    return imgDataUrl;
+  function generateScreenshot() {
+    return domtoimage
+      .toPng(document.getElementById("App"))
+      .catch(function(error) {
+        console.error("oops, something went wrong!", error);
+      });
   }
 
-  React.useEffect(() => {
+  const takeScreenshot = async () => {
     if (appRef.current) {
-      generateScreenshot().then(imgDataUrl => {
-        if (imgDataUrl !== imageData) setImageData(imgDataUrl);
-      });
+      console.log("taking screenshot", canvasRef);
+      const dataUrl = await generateScreenshot();
+      setImageSrc(dataUrl);
     } else {
-      setState(state => state + 1);
+      console.log(`can't take screenshot`);
     }
-  });
+  };
+
   return (
-    <>
-      <div className="App" ref={appRef}>
+    <div>
+      <Layout id="App" className="App" ref={appRef}>
         <h1>Hello CodeSandbox</h1>
         <h2>Start editing to see some magic happen!</h2>
-      </div>
-      {imageData && <img alt="screenshot" id="output" src={imageData} />}
-    </>
+        <button onClick={takeScreenshot}>Take Screenshot</button>
+      </Layout>
+      {imageSrc && <img alt="screenshot" src={imageSrc} />}
+    </div>
   );
 }
-
+const Layout = styled.div`
+  font-family: sans-serif;
+  text-align: center;
+  background-color: red;
+`;
 const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
