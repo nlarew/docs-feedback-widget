@@ -1,8 +1,10 @@
 import React from "react";
 import styled from "@emotion/styled";
 import ScreenshotWidget from "./../components/ScreenshotWidget";
+import Button from "@leafygreen-ui/button";
 
 export default function RatingDetailView({ widget: { state, send } }) {
+  const widget = { state, send };
   const { wasRatedHelpfulWithCaveat, wasRatedUnhelpful } = state.value;
   const {
     somethingWasMissing,
@@ -41,7 +43,8 @@ export default function RatingDetailView({ widget: { state, send } }) {
         </FeedbackTypeToggleButton>
       </FeedbackTypeButtonGrid>
       <FeedbackCommentTextInput placeholder="Leave feedback here" />
-      <ScreenshotWidget />
+      <ScreenshotWidget widget={widget} />
+      <Button variant="primary">Submit Feedback</Button>
     </Layout>
   );
 }

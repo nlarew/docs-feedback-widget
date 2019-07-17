@@ -1,4 +1,4 @@
-import { Machine } from "xstate";
+import { Machine, assign, send } from "xstate";
 
 const feedbackStateForType = (feedbackType, toggleActionName) => ({
   id: feedbackType,
@@ -36,10 +36,23 @@ const feedbackTypesState = {
   },
 };
 
+const screenshotEventHandler = {
+  on: {
+    TOGGLE_INCLUDE_SCREENSHOT: {
+      actions: "toggleIncludeScreenshot",
+    },
+    SET_SCREENSHOT: {
+      actions: "setScreenshot",
+    },
+  },
+};
 const feedbackWidgetState = {
   id: "feedbackWidget",
-  // initial: "askingDomain",
   initial: "wasRatedUnhelpful",
+  context: {
+    includeScreenshot: true,
+    screenshot: null,
+  },
   states: {
     askingDomain: {
       on: { ASK_HELPFUL: "askingHelpful" },
@@ -54,11 +67,22 @@ const feedbackWidgetState = {
     wasRatedHelpful: {},
     wasRatedHelpfulWithCaveat: {
       ...feedbackTypesState,
+      ...screenshotEventHandler,
     },
     wasRatedUnhelpful: {
       ...feedbackTypesState,
+      ...screenshotEventHandler,
     },
   },
 };
+const toggleIncludeScreenshot = assign({
+  includeScreenshot: (context, event) => !context.includeScreenshot,
+});
+const setScreenshot = assign({
+  screenshot: (context, event) => event.screenshot,
+});
 
-export default Machine(feedbackWidgetState);
+export default Machine(feedbackWidgetState, {
+  actions: { toggleIncludeScreenshot, setScreenshot },
+  guards: {},
+});

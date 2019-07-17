@@ -38,7 +38,7 @@ export default function FeedbackWidget() {
 }
 const Layout = styled.div`
   width: 100vw;
-  height: 100vh;
+  height: 200vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,6 +52,7 @@ const Card = styled.div`
   width: 380px;
 `;
 const CardHeader = styled.div`
+  color: white;
   background-color: ${uiColors.green.base};
   min-height: 40px;
   padding: 0 12px;

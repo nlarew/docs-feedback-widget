@@ -1,5 +1,5 @@
 {
-  "name": "new",
+  "name": "feedback-widget",
   "version": "1.0.0",
   "description": "",
   "keywords": [],
@@ -7,6 +7,7 @@
   "dependencies": {
     "@emotion/core": "10.0.14",
     "@emotion/styled": "10.0.14",
+    "@leafygreen-ui/button": "2.3.2",
     "@leafygreen-ui/card": "1.0.0",
     "@leafygreen-ui/palette": "1.0.2",
     "@leafygreen-ui/toggle": "2.1.2",

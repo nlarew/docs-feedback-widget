@@ -1,9 +1,3 @@
-.App {
-  /* font-family: sans-serif;
-  text-align: center;
-  background-color: red; */
-}
-
-#output {
-  border: 1px solid red;
+* {
+  font-family: sans-serif;
 }
