@@ -9,6 +9,7 @@
     "@emotion/styled": "10.0.14",
     "@leafygreen-ui/card": "1.0.0",
     "@leafygreen-ui/palette": "1.0.2",
+    "@leafygreen-ui/toggle": "2.1.2",
     "@xstate/react": "0.7.0",
     "dom-to-image": "2.6.0",
     "react": "16.8.6",

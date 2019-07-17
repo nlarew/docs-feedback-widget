@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
-import FeedbackStep from "./../components/FeedbackStep";
+import ScreenshotWidget from "./../components/ScreenshotWidget";
 
 export default function RatingDetailView({ widget: { state, send } }) {
   const { wasRatedHelpfulWithCaveat, wasRatedUnhelpful } = state.value;
@@ -12,41 +12,40 @@ export default function RatingDetailView({ widget: { state, send } }) {
   } = wasRatedHelpfulWithCaveat || wasRatedUnhelpful;
   const isSelected = value => value === "selected";
   return (
-    <RatingDetailViewLayout>
-      <FeedbackStep number={1}>What was the problem?</FeedbackStep>
+    <Layout>
+      <Header>What was the problem?</Header>
       <FeedbackTypeButtonGrid>
         <FeedbackTypeToggleButton
-          selected={isSelected(somethingWasMissing)}
+          isSelected={isSelected(somethingWasMissing)}
           onClick={() => send("TOGGLE_SOMETHING_MISSING")}
         >
           Something Was Missing
         </FeedbackTypeToggleButton>
         <FeedbackTypeToggleButton
-          selected={isSelected(somethingWasWrong)}
+          isSelected={isSelected(somethingWasWrong)}
           onClick={() => send("TOGGLE_SOMETHING_WRONG")}
         >
           Something Was Wrong
         </FeedbackTypeToggleButton>
         <FeedbackTypeToggleButton
-          selected={isSelected(somethingWasOutOfDate)}
+          isSelected={isSelected(somethingWasOutOfDate)}
           onClick={() => send("TOGGLE_SOMETHING_OUT_OF_DATE")}
         >
           Something Was Out-of-Date
         </FeedbackTypeToggleButton>
         <FeedbackTypeToggleButton
-          selected={isSelected(somethingWasConfusing)}
+          isSelected={isSelected(somethingWasConfusing)}
           onClick={() => send("TOGGLE_SOMETHING_CONFUSING")}
         >
           Something Was Confusing
         </FeedbackTypeToggleButton>
       </FeedbackTypeButtonGrid>
-      <FeedbackStep number={2}>Please explain</FeedbackStep>
       <FeedbackCommentTextInput placeholder="Leave feedback here" />
-      <FeedbackStep number={3}>Submit a screenshot?</FeedbackStep>
-    </RatingDetailViewLayout>
+      <ScreenshotWidget />
+    </Layout>
   );
 }
-const RatingDetailViewLayout = styled.div`
+const Layout = styled.div`
   display: flex;
   flex-direction: column;
 `;
@@ -56,13 +55,21 @@ const FeedbackTypeButtonGrid = styled.div`
   grid-template-columns: 1fr 1fr;
   grid-gap: 12px;
   margin-top: 12px;
+  margin-block-start: 0.5em;
+  margin-block-end: 0.5em;
 `;
 const FeedbackTypeToggleButton = styled.button`
-  background: ${({ selected }) =>
-    selected ? "rgba(19,170,82,1)" : "rgba(250,251,252,1)"};
+  background: ${({ isSelected }) =>
+    isSelected ? "rgba(19,170,82,1)" : "rgba(250,251,252,1)"};
 `;
 const FeedbackCommentTextInput = styled("textarea")`
   min-width: 100%;
   max-width: 100%;
   margin-top: 12px;
+  margin-block-start: 0.5em;
+  margin-block-end: 0.5em;
+`;
+const Header = styled.h3`
+  margin-block-start: 0.5em;
+  margin-block-end: 0.35em;
 `;
