@@ -13,6 +13,6 @@ const CommentTextArea = styled("textarea")`
   font-size: 16px;
   line-height: 24px;
   border-radius: 4px;
-  border-color: rgba(0, 0, 0, 0.25);
+  border-color: rgba(0, 0, 0, 0.5);
 `;
 export default CommentTextArea;

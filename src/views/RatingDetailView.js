@@ -5,6 +5,7 @@ import Button from "@leafygreen-ui/button";
 import { uiColors } from "@leafygreen-ui/palette";
 import Icon from "@leafygreen-ui/icon";
 import { useWidgetState } from "./../stateMachine";
+import CommentTextArea from "./../components/CommentTextArea";
 
 export default function RatingDetailView(props) {
   const { state, send } = useWidgetState();
@@ -12,7 +13,7 @@ export default function RatingDetailView(props) {
     <Layout>
       {state.matches("hasRating.positive") && (
         <>
-          <FeedbackCommentTextInput
+          <CommentTextArea
             placeholder="Tell us more..."
             value={state.context.comment}
             onChange={e =>
@@ -21,7 +22,10 @@ export default function RatingDetailView(props) {
           />
           <ScreenshotWidget />
           <Footer>
-            Need help? Visit our help center.
+            <span>
+              Need support? Visit our{" "}
+              <a href="https://support.mongodb.com/welcome">help center</a>.
+            </span>
             <Button variant="primary">Submit</Button>
           </Footer>
         </>
@@ -31,7 +35,7 @@ export default function RatingDetailView(props) {
           <Header>What seems to be the issue?</Header>
           <FeedbackTypeSection />
           <Header>Help us improve by telling us more</Header>
-          <FeedbackCommentTextInput
+          <CommentTextArea
             placeholder="Please tell us about the issue(s) that you encountered here. Try to include specific details to help us improve our documentation."
             value={state.context.comment}
             onChange={e =>
@@ -54,6 +58,7 @@ export default function RatingDetailView(props) {
 const Layout = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 const Header = styled.h3`
   margin-block-start: 0.5em;
@@ -84,7 +89,7 @@ const FeedbackTypeToggleButton = styled.button`
   box-shadow: ${({ isSelected }) =>
     isSelected
       ? `0 0 0 2px ${uiColors.green.base}`
-      : `0 0 0 1px ${uiColors.black}`};
+      : `0 0 0 1px rgba(0, 0, 0, 0.5)`};
 `;
 const FeedbackTypeSection = props => {
   const { state, send } = useWidgetState();
@@ -124,17 +129,3 @@ const FeedbackTypeSection = props => {
     </FeedbackTypeButtonGrid>
   );
 };
-
-const FeedbackCommentTextInput = styled("textarea")`
-  resize: none;
-  box-sizing: border-box;
-  height: 140px;
-  padding: 14px;
-  min-width: 100%;
-  max-width: 100%;
-  margin-top: 12px;
-  margin-block-start: 0.5em;
-  font-size: 16px;
-  border-radius: 4px;
-  border-color: rgba(0, 0, 0, 0.25);
-`;

@@ -3,30 +3,57 @@ import styled from "@emotion/styled";
 import { AskingHelpfulView, RatingDetailView } from "./../views";
 import Icon from "@leafygreen-ui/icon";
 import { useWidgetState } from "./../stateMachine";
+import Modal from "react-modal";
+
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    padding: 0,
+  },
+};
 
 export default function FeedbackWidget() {
   const { state, send } = useWidgetState();
+  console.log("state", state);
   const closeModal = () => send("CLOSE_MODAL");
   return (
     <Layout>
-      <Card>
-        <CardHeader>
-          <h2>
-            {state.matches("hasRating.positive") && "We're glad to hear that!"}
-            {state.matches("hasRating.negative") && "Sorry to hear that."}
-          </h2>
-          <Icon
-            glyph="X"
-            size="large"
-            onClick={() => {
-              state.matches("hasNoRating") && closeModal();
-              state.matches("hasRating") && closeModal();
-            }}
-          />
-        </CardHeader>
-        {state.matches("hasNoRating") && <AskingHelpfulView />}
-        {state.matches("hasRating") && <RatingDetailView />}
-      </Card>
+      {!state.context.modal.isOpen && <AskingHelpfulView />}
+      <Modal
+        contentLabel="Example Modal"
+        appElement={document.getElementById("root")}
+        isOpen={state.context.modal.isOpen}
+        // onAfterOpen={this.afterOpenModal}
+        // onRequestClose={this.closeModal}
+        style={customStyles}
+      >
+        <Card>
+          <CardHeader>
+            <h2>
+              {state.matches("hasRating.positive") &&
+                "We're glad to hear that!"}
+              {state.matches("hasRating.negative") && "Sorry to hear that."}
+            </h2>
+            <Icon
+              glyph="X"
+              size="large"
+              onClick={() => {
+                state.matches("hasNoRating") && closeModal();
+                state.matches("hasRating") && closeModal();
+              }}
+            />
+          </CardHeader>
+          <CardBody>
+            {state.matches("hasNoRating") && <AskingHelpfulView />}
+            {state.matches("hasRating") && <RatingDetailView />}
+          </CardBody>
+        </Card>
+      </Modal>
     </Layout>
   );
 }
@@ -38,7 +65,6 @@ const Layout = styled.div`
   align-items: center;
   justify-content: space-around;
   background: lightgrey;
-  font-family: sans-serif;
 `;
 const Card = styled.div`
   border-radius: 4px;
@@ -48,6 +74,7 @@ const Card = styled.div`
   padding: 24px;
   background: white;
   min-width: 420px;
+  font-family: sans-serif;
 `;
 const CardHeader = styled.div`
   display: flex;
@@ -56,4 +83,9 @@ const CardHeader = styled.div`
   & h2 {
     margin: 0 auto 0 0;
   }
+`;
+const CardBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;

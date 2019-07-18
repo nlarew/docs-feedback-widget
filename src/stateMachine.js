@@ -154,6 +154,7 @@ const feedbackWidgetState = {
     screenshot: null,
     helpful: "",
     comment: "",
+    modal: { isOpen: true },
     type: {
       needHelp: false,
       unexpectedBehavior: false,
@@ -162,7 +163,13 @@ const feedbackWidgetState = {
     },
   },
   on: {
-    CLOSE_MODAL: "hasNoRating",
+    OPEN_MODAL: {
+      actions: (context, event) => (context.modal.isOpen = true),
+    },
+    CLOSE_MODAL: {
+      target: "hasNoRating",
+      actions: (context, event) => (context.modal.isOpen = false),
+    },
   },
   states: {
     hasNoRating: {
@@ -185,10 +192,17 @@ const feedbackWidgetState = {
       initial: "unknown",
       states: {
         unknown: {
+          entry: (context, event) => (context.modal.isOpen = true),
           on: {
             "": [
-              { target: "positive", cond: "isPositiveRating" },
-              { target: "negative", cond: "isNegativeRating" },
+              {
+                target: "positive",
+                cond: "isPositiveRating",
+              },
+              {
+                target: "negative",
+                cond: "isNegativeRating",
+              },
             ],
           },
         },
@@ -198,6 +212,7 @@ const feedbackWidgetState = {
     },
   },
 };
+const openModal = assign({ modal: { isOpen: true } });
 const toggleIncludeScreenshot = assign({
   includeScreenshot: (context, event) => !context.includeScreenshot,
 });
@@ -219,6 +234,7 @@ const isNegativeRating = (context, event) => {
 };
 const stateMachine = Machine(feedbackWidgetState, {
   actions: {
+    openModal,
     rateYes,
     rateYesBut,
     rateNo,
