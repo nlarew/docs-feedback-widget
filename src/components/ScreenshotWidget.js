@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { uiColors } from "@leafygreen-ui/palette";
 import styled from "@emotion/styled";
 import Toggle from "@leafygreen-ui/toggle";
-import Checkbox from "@leafygreen-ui/checkbox";
+// import Checkbox from "@leafygreen-ui/checkbox";
 import Screenshot from "./../Screenshot";
-import CanvasDraw from "react-canvas-draw";
+// import CanvasDraw from "react-canvas-draw";
 import Loader from "react-loader-spinner";
+import { useWidgetState } from "./../stateMachine";
 
-export default function ScreenshotWidget({ widget: { state, send } }) {
+export default function ScreenshotWidget(props) {
+  const { state, send } = useWidgetState();
   console.log("state", state);
   const { screenshot, includeScreenshot } = state.context;
   const [screenshotPreview, setScreenshotPreview] = useState();
@@ -61,12 +63,14 @@ const ScreenshotPreview = ({ isLoading, image }) => {
   const Container = styled.div`
     margin-block-start: 0.5em;
     width: 100%;
-    background-color: ${uiColors.gray.dark1};
+    background-color: ${uiColors.gray.light1};
+    background-color: #d4d8d8;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: ${isLoading ? "300px" : "0px"};
+    border-radius: 4px;
   `;
   return (
     <Container>

@@ -1,4 +1,6 @@
+import React from "react";
 import { Machine, assign, send } from "xstate";
+import { useMachine } from "@xstate/react";
 
 const capitalizeFirst = str => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -130,6 +132,7 @@ const positiveRatingState = {
   id: "positiveRating",
   type: "parallel",
   states: {
+    comment: commentState,
     screenshot: screenshotState,
   },
 };
@@ -157,6 +160,9 @@ const feedbackWidgetState = {
       docsIssue: false,
       somethingElse: false,
     },
+  },
+  on: {
+    CLOSE_MODAL: "hasNoRating",
   },
   states: {
     hasNoRating: {
@@ -211,7 +217,7 @@ const isNegativeRating = (context, event) => {
   const negativeRatings = ["yesbut", "no"];
   return negativeRatings.includes(context.helpful);
 };
-export default Machine(feedbackWidgetState, {
+const stateMachine = Machine(feedbackWidgetState, {
   actions: {
     rateYes,
     rateYesBut,
@@ -229,3 +235,24 @@ export default Machine(feedbackWidgetState, {
     isNegativeRating,
   },
 });
+export default stateMachine;
+
+const WidgetContext = React.createContext();
+export function useWidgetState() {
+  const widget = React.useContext(WidgetContext);
+  if (!widget) {
+    throw new Error(
+      "You can only call useWidgetState() inside of a WidgetProvider.",
+    );
+  }
+  return widget;
+}
+export function WidgetProvider(props) {
+  const [state, send] = useMachine(stateMachine);
+  const widget = { state, send };
+  return (
+    <WidgetContext.Provider value={widget}>
+      {props.children}
+    </WidgetContext.Provider>
+  );
+}

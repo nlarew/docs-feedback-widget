@@ -1,35 +1,31 @@
 import React from "react";
 import styled from "@emotion/styled";
-import { uiColors } from "@leafygreen-ui/palette";
-import stateMachine from "./../stateMachine";
-import { useMachine } from "@xstate/react";
-import {
-  AskingDomainView,
-  AskingHelpfulView,
-  NegativeRatingView,
-} from "./../views";
+import { AskingHelpfulView, RatingDetailView } from "./../views";
+import Icon from "@leafygreen-ui/icon";
+import { useWidgetState } from "./../stateMachine";
 
 export default function FeedbackWidget() {
-  const [state, send] = useMachine(stateMachine);
-  const widget = { state, send };
-  console.log(state);
+  const { state, send } = useWidgetState();
+  const closeModal = () => send("CLOSE_MODAL");
   return (
     <Layout>
       <Card>
         <CardHeader>
-          <h2>Leave Feedback</h2>
+          <h2>
+            {state.matches("hasRating.positive") && "We're glad to hear that!"}
+            {state.matches("hasRating.negative") && "Sorry to hear that."}
+          </h2>
+          <Icon
+            glyph="X"
+            size="large"
+            onClick={() => {
+              state.matches("hasNoRating") && closeModal();
+              state.matches("hasRating") && closeModal();
+            }}
+          />
         </CardHeader>
-        <CardBody>
-          {state.matches("hasNoRating") && (
-            <AskingHelpfulView widget={widget} />
-          )}
-          {state.matches("hasRating.positive") && (
-            <NegativeRatingView rating="positive" widget={widget} />
-          )}
-          {state.matches("hasRating.negative") && (
-            <NegativeRatingView rating="negative" widget={widget} />
-          )}
-        </CardBody>
+        {state.matches("hasNoRating") && <AskingHelpfulView />}
+        {state.matches("hasRating") && <RatingDetailView />}
       </Card>
     </Layout>
   );
@@ -42,27 +38,22 @@ const Layout = styled.div`
   align-items: center;
   justify-content: space-around;
   background: lightgrey;
-  transition: 10000ms;
+  font-family: sans-serif;
 `;
 const Card = styled.div`
   border-radius: 4px;
   box-shadow: 0 16px 60px 0 rgba(86, 91, 115, 0.2);
   display: flex;
   flex-direction: column;
-  width: 380px;
+  padding: 24px;
+  background: white;
+  min-width: 420px;
 `;
 const CardHeader = styled.div`
-  color: white;
-  background-color: ${uiColors.green.base};
-  min-height: 40px;
-  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   & h2 {
-    margin-block-start: 0.7em;
-    margin-block-end: 0.7em;
+    margin: 0 auto 0 0;
   }
-`;
-const CardBody = styled.div`
-  height: 100%;
-  padding: 8px 12px 12px 12px;
-  background: white;
 `;

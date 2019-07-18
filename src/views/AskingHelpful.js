@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "@emotion/styled";
+import { useWidgetState } from "./../stateMachine";
 
-export default function AskingHelpfulView({ widget: { state, send } }) {
+export default function AskingHelpfulView(props) {
+  const { state, send } = useWidgetState();
   return (
     <Layout>
       <Heading>Was this page helpful?</Heading>
