@@ -6,7 +6,7 @@ import { AskingHelpfulView } from "./views";
 
 // import "./styles.css";
 
-exports = {
+module.exports = {
   AskingHelpfulView
 };
 export default function Feedback() {
@@ -17,5 +17,5 @@ export default function Feedback() {
   );
 }
 
-// const rootElement = document.getElementById("root");
-// ReactDOM.render(<Feedback />, rootElement);
+const rootElement = document.getElementById("root");
+ReactDOM.render(<Feedback />, rootElement);
