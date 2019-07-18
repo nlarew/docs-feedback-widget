@@ -9,6 +9,7 @@ import { AskingHelpfulView } from "./views";
 module.exports = {
   AskingHelpfulView
 };
+
 export default function Feedback() {
   return (
     <WidgetProvider>
