@@ -6,12 +6,13 @@ import { useMachine } from "@xstate/react";
 import {
   AskingDomainView,
   AskingHelpfulView,
-  RatingDetailView,
+  NegativeRatingView,
 } from "./../views";
 
 export default function FeedbackWidget() {
   const [state, send] = useMachine(stateMachine);
   const widget = { state, send };
+  console.log(state);
   return (
     <Layout>
       <Card>
@@ -19,17 +20,14 @@ export default function FeedbackWidget() {
           <h2>Leave Feedback</h2>
         </CardHeader>
         <CardBody>
-          {state.matches("askingDomain") && (
-            <AskingDomainView widget={widget} />
-          )}
-          {state.matches("askingHelpful") && (
+          {state.matches("hasNoRating") && (
             <AskingHelpfulView widget={widget} />
           )}
-          {state.matches("wasRatedHelpfulWithCaveat") && (
-            <RatingDetailView widget={widget} />
+          {state.matches("hasRating.positive") && (
+            <NegativeRatingView rating="positive" widget={widget} />
           )}
-          {state.matches("wasRatedUnhelpful") && (
-            <RatingDetailView widget={widget} />
+          {state.matches("hasRating.negative") && (
+            <NegativeRatingView rating="negative" widget={widget} />
           )}
         </CardBody>
       </Card>
@@ -38,11 +36,13 @@ export default function FeedbackWidget() {
 }
 const Layout = styled.div`
   width: 100vw;
-  height: 200vh;
+  height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   background: lightgrey;
+  transition: 10000ms;
 `;
 const Card = styled.div`
   border-radius: 4px;

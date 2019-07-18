@@ -1,5 +1,4 @@
-import AskingDomainView from "./AskingDomain";
 import AskingHelpfulView from "./AskingHelpful";
-import RatingDetailView from "./RatingDetail";
+import NegativeRatingView from "./NegativeRatingView";
 
-export { AskingDomainView, AskingHelpfulView, RatingDetailView };
+export { AskingHelpfulView, NegativeRatingView };

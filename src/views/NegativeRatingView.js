@@ -3,46 +3,53 @@ import styled from "@emotion/styled";
 import ScreenshotWidget from "./../components/ScreenshotWidget";
 import Button from "@leafygreen-ui/button";
 
-export default function RatingDetailView({ widget: { state, send } }) {
+export default function NegativeRatingView({
+  rating,
+  widget: { state, send },
+}) {
   const widget = { state, send };
-  const { wasRatedHelpfulWithCaveat, wasRatedUnhelpful } = state.value;
   const {
-    somethingWasMissing,
-    somethingWasWrong,
-    somethingWasOutOfDate,
-    somethingWasConfusing,
-  } = wasRatedHelpfulWithCaveat || wasRatedUnhelpful;
+    needHelp,
+    unexpectedBehavior,
+    docsIssue,
+    somethingElse,
+  } = state.value.hasRating.negative.types;
   const isSelected = value => value === "selected";
   return (
     <Layout>
-      <Header>What was the problem?</Header>
+      <Header>What Was The Problem?</Header>
       <FeedbackTypeButtonGrid>
         <FeedbackTypeToggleButton
-          isSelected={isSelected(somethingWasMissing)}
-          onClick={() => send("TOGGLE_SOMETHING_MISSING")}
+          isSelected={isSelected(needHelp)}
+          onClick={() => send("TOGGLE_NEED_HELP")}
         >
-          Something Was Missing
+          I still need help
         </FeedbackTypeToggleButton>
         <FeedbackTypeToggleButton
-          isSelected={isSelected(somethingWasWrong)}
-          onClick={() => send("TOGGLE_SOMETHING_WRONG")}
+          isSelected={isSelected(unexpectedBehavior)}
+          onClick={() => send("TOGGLE_UNEXPECTED_BEHAVIOR")}
         >
-          Something Was Wrong
+          I'm seeing unexpected behavior
         </FeedbackTypeToggleButton>
         <FeedbackTypeToggleButton
-          isSelected={isSelected(somethingWasOutOfDate)}
-          onClick={() => send("TOGGLE_SOMETHING_OUT_OF_DATE")}
+          isSelected={isSelected(docsIssue)}
+          onClick={() => send("TOGGLE_DOCS_ISSUE")}
         >
-          Something Was Out-of-Date
+          There was an issue with the docs
         </FeedbackTypeToggleButton>
         <FeedbackTypeToggleButton
-          isSelected={isSelected(somethingWasConfusing)}
-          onClick={() => send("TOGGLE_SOMETHING_CONFUSING")}
+          isSelected={isSelected(somethingElse)}
+          onClick={() => send("TOGGLE_SOMETHING_ELSE")}
         >
-          Something Was Confusing
+          Something else
         </FeedbackTypeToggleButton>
       </FeedbackTypeButtonGrid>
-      <FeedbackCommentTextInput placeholder="Leave feedback here" />
+      <Header>Tell Us More</Header>
+      <FeedbackCommentTextInput
+        placeholder="Leave feedback here"
+        value={state.context.comment}
+        onChange={e => send({ type: "SET_COMMENT_TEXT", text: e.target.value })}
+      />
       <ScreenshotWidget widget={widget} />
       <Button variant="primary">Submit Feedback</Button>
     </Layout>
@@ -64,13 +71,18 @@ const FeedbackTypeButtonGrid = styled.div`
 const FeedbackTypeToggleButton = styled.button`
   background: ${({ isSelected }) =>
     isSelected ? "rgba(19,170,82,1)" : "rgba(250,251,252,1)"};
+  padding: 12px;
 `;
 const FeedbackCommentTextInput = styled("textarea")`
+  resize: none;
+  box-sizing: border-box;
+  height: 140px;
+  padding: 14px;
   min-width: 100%;
   max-width: 100%;
   margin-top: 12px;
   margin-block-start: 0.5em;
-  margin-block-end: 0.5em;
+  font-size: 16px;
 `;
 const Header = styled.h3`
   margin-block-start: 0.5em;

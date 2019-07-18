@@ -1,12 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { uiColors } from "@leafygreen-ui/palette";
 import styled from "@emotion/styled";
 import Toggle from "@leafygreen-ui/toggle";
+import Checkbox from "@leafygreen-ui/checkbox";
 import Screenshot from "./../Screenshot";
+import CanvasDraw from "react-canvas-draw";
+import Loader from "react-loader-spinner";
 
 export default function ScreenshotWidget({ widget: { state, send } }) {
   console.log("state", state);
   const { screenshot, includeScreenshot } = state.context;
+  const [screenshotPreview, setScreenshotPreview] = useState();
   const isLoading = includeScreenshot && !screenshot;
   const toggleIncludeScreenshot = () => send("TOGGLE_INCLUDE_SCREENSHOT");
   useEffect(() => {
@@ -14,11 +18,15 @@ export default function ScreenshotWidget({ widget: { state, send } }) {
       const ss = await Screenshot.ofElement("#root");
       // const resized = await ss.resize({ width: 356, height: 40 });
       const scaled = await ss.scaleDownToFit({ width: 356, height: 300 });
-      send({ type: "SET_SCREENSHOT", screenshot: scaled });
+      send({ type: "SET_SCREENSHOT", screenshot: ss });
+      setScreenshotPreview(scaled);
     };
     if (includeScreenshot) {
       takeScreenshot();
-      return () => send({ type: "SET_SCREENSHOT", screenshot: null });
+      return () => {
+        send({ type: "SET_SCREENSHOT", screenshot: null });
+        setScreenshotPreview(null);
+      };
     }
   }, [includeScreenshot, send]);
   return (
@@ -29,13 +37,9 @@ export default function ScreenshotWidget({ widget: { state, send } }) {
           onChange={toggleIncludeScreenshot}
           checked={includeScreenshot}
         />
-        <span>Include a Screenshot</span>
+        <span>Include a screenshot of this page</span>
       </Prompt>
-      {screenshot && (
-        <ScreenshotViewer>
-          <img alt="screenshot" src={screenshot.dataUrl} />
-        </ScreenshotViewer>
-      )}
+      <ScreenshotPreview image={screenshotPreview} isLoading={isLoading} />
     </Layout>
   );
 }
@@ -52,11 +56,32 @@ const Prompt = styled.div`
     margin-left: 12px;
   }
 `;
-const ScreenshotViewer = styled.div`
-  margin-block-start: 0.5em;
-  width: 100%;
-  background-color: ${uiColors.black};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+
+const ScreenshotPreview = ({ isLoading, image }) => {
+  const Container = styled.div`
+    margin-block-start: 0.5em;
+    width: 100%;
+    background-color: ${uiColors.gray.dark1};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: ${isLoading ? "300px" : "0px"};
+  `;
+  return (
+    <Container>
+      {image ? (
+        <img alt="screenshot" src={image.dataUrl} />
+      ) : (
+        <>
+          <LoadingMessage>Generating Screenshot</LoadingMessage>
+          <Loader type="ThreeDots" color={uiColors.white} height="60" />
+        </>
+      )}
+    </Container>
+  );
+};
+const LoadingMessage = styled.span`
+  color: ${uiColors.white};
+  font-size: 16px;
 `;
