@@ -2,12 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import FeedbackWidget from "./components/FeedbackWidget";
 import { WidgetProvider } from "./stateMachine";
-import { AskingHelpful } from "./views";
+import { AskingHelpfulView } from "./views";
 
 // import "./styles.css";
 
 exports = {
-  FeedbackPrompt: AskingHelpful,
+  AskingHelpfulView
 };
 export default function Feedback() {
   return (

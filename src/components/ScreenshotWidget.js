@@ -10,7 +10,6 @@ import { useWidgetState } from "./../stateMachine";
 
 export default function ScreenshotWidget(props) {
   const { state, send } = useWidgetState();
-  console.log("state", state);
   const { screenshot, includeScreenshot } = state.context;
   const [screenshotPreview, setScreenshotPreview] = useState();
   const isLoading = includeScreenshot && !screenshot;
